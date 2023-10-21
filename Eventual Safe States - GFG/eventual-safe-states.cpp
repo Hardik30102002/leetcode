@@ -10,36 +10,34 @@ using namespace std;
 
 class Solution {
   public:
-    bool checkcycle(vector<int> adj[],int src,
-                    unordered_map<int,bool>&visited,
-                    unordered_map<int,bool> &dfsvisited,int safenodes[]){
-        visited[src]=true;
-        dfsvisited[src]=true;
-        safenodes[src]=0;
-        for(auto nbr:adj[src]){
-            if(!visited[nbr]){
-                bool nextans=checkcycle(adj,nbr,visited,dfsvisited,safenodes);
-                if(nextans==true)   return true;
-            }
-            if(visited[nbr]==true && dfsvisited[nbr]==true){
-                return true;
-            }
-        }
-        dfsvisited[src]=false;
-        safenodes[src]=1;
-        return false;
-    }
+    bool cycle(vector<int> adj[],int src,unordered_map<int,bool>&visited,
+                unordered_map<int,bool>&dfsvisited,int safenode[]){
+                    visited[src]=true;
+                    dfsvisited[src]=true;
+                    safenode[src]=0;
+                    for(auto nbr:adj[src]){
+                        if(!visited[nbr]){
+                            bool nextans=cycle(adj,nbr,visited,dfsvisited,safenode);
+                            if(nextans==true)
+                                return true;
+                        }
+                        if(visited[nbr]==true && dfsvisited[nbr]==true)
+                            return true;
+                    }
+                    dfsvisited[src]=false;
+                    safenode[src]=1;
+                    return false;
+                }
     vector<int> eventualSafeNodes(int V, vector<int> adj[]) {
-        vector<int> ans;
+        vector<int>ans;
         unordered_map<int,bool> visited,dfsvisited;
-        int safenodes[V]={0};
+        int safenode[V]={0};
         for(int i=0;i<V;i++){
-            if(!visited[i]){
-                bool x=checkcycle(adj,i,visited,dfsvisited,safenodes);
-            }
+            if(!visited[i])
+                cycle(adj,i,visited,dfsvisited,safenode);
         }
         for(int i=0;i<V;i++){
-            if(safenodes[i])    ans.push_back(i);
+            if(safenode[i]) ans.push_back(i);
         }
         return ans;
     }
